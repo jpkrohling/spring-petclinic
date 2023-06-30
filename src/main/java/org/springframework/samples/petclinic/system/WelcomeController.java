@@ -19,11 +19,20 @@ package org.springframework.samples.petclinic.system;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.Span;
+
 @Controller
 class WelcomeController {
 
+	Tracer tracer = Telemetry.getOpenTelemetry()
+		.getTracer("org.springframework.samples.petclinic.system.WelcomeController");
+
 	@GetMapping("/")
 	public String welcome() {
+		Span span = tracer.spanBuilder("WelcomeController.welcome").startSpan();
+		span.end();
+
 		return "welcome";
 	}
 
